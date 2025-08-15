@@ -21,38 +21,43 @@
 
 
 #########################################################################
-
-# Installation instruction for Mac
-
-install.packages(c("reticulate", "tensorflow", "keras"))
-
-library(reticulate)
-
-# Use whatever Python R is already linked to
-use_python(Sys.which("python3"), required = TRUE)
-
-# Install directly into that Python
-py_install(c("tensorflow", "keras", "h5py"), pip = TRUE)
-
-#__________________________________________________
-R.version$arch
-Sys.info()[["machine"]]
-#__________________________________________________
-
+## Setup (robust installs + environment)
 #########################################################################
 
-# Laod Tensorflow and Keras and then obtain MNIST data set
+pkgs <- c("reticulate","tensorflow","keras","magrittr","abind","jpeg")         # /\
+to_install <- pkgs[!pkgs %in% rownames(installed.packages())]                  # /\
+if (length(to_install)) install.packages(to_install)                           # /\
 
-# Test TensorFlow and Keras
-library(tensorflow)
+library(reticulate)
+library(tensorflow)                                                            # /\
+library(keras)                                                                 # /\
+library(magrittr)
+
+# Use system python by default (or switch to a conda env if you prefer)
+use_python(Sys.which("python3"), required = TRUE)
+
+# macOS Apple Silicon (optional): create/use conda env with TF-metal
+# reticulate::install_miniconda(); conda_create("r-tf"); use_condaenv("r-tf", required=TRUE)
+# py_install(c("tensorflow-macos","tensorflow-metal","h5py","numpy<2"), pip=TRUE)
+
+# Reproducibility: set seeds in R, NumPy, and TensorFlow
+set.seed(123)                                                                  # /\
+np <- import("numpy", convert = FALSE); np$random$seed(123L)                   # /\
+tf$random$set_seed(123L)                                                       # /\
+
+# Quick platform check (kept)
+R.version$arch; Sys.info()[["machine"]]
+
+#########################################################################
+## TensorFlow / Keras smoke test
+#########################################################################
+
 tf$version$VERSION
-tf$add(1L, 2L)$numpy()
+tf$math$add(1L, 2L)$numpy()  
 
-
-
-
-
-### Part I: MNIST data set
+#########################################################################
+## Part I: MNIST dataset
+#########################################################################
 
 mnist <- dataset_mnist()
 str(mnist)
