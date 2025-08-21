@@ -3,7 +3,7 @@
 #########################################################################
 #########################################################################
 
-## Practical III: Classical Machine Learning for MNIST Classification
+## Practical III: Classical Machine Learning for MNIST Classification 
 
 #########################################################################
 
